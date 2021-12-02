@@ -2,45 +2,34 @@
 const buttonClick = document.getElementById('formSend'),
 show = document.getElementById('valueX');
 
-let country, lasUpdate, conf, deat, arr = [], contain;
-
-
 
 // https://api.kawalcorona.com/
-async function getData(a) {
 
+async function getData() {
     try {
         const data = await fetch('https://api.kawalcorona.com');
         const dataParse = await data.json();
+        let result = '';
+
+        dataParse.map(val => {
+            const lastUpdate = new Date(val.attributes.Last_Update).toLocaleString();
+            const countryRegion = val.attributes.Country_Region;
+            const confirmed = val.attributes.Confirmed;
+            const deaths = val.attributes.Deaths;
+
+            result += template(lastUpdate, countryRegion, confirmed, deaths);
+
+            show.innerHTML = result;
+        })
         
-        for (const x in dataParse) {
-            arr[x] = dataParse[x].attributes
-        }
-
-        arr.forEach(element => {
-            country = element.Country_Region,
-            lasUpdate = new Date(element.Last_Update),
-            conf = element.Confirmed,
-            deat = element.Deaths;
-            
-
-            contain += template(lasUpdate, country, conf, deat );
-            
-            console.log(lasUpdate, country, conf, deat );
-        });
+        
         
     } catch(err) {
         console.log(err);
     }
-    
-    
-    
 }
 
-
-getData(template);
-
-
+getData();
 
 
 
